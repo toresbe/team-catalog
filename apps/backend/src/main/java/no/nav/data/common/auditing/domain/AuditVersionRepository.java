@@ -8,12 +8,27 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface AuditVersionRepository extends JpaRepository<AuditVersion, UUID> {
+
+    List<AuditVersion> getByTimeBetween(LocalDate timeFrom, LocalDate timeTo);
+
+    @Query(value = """
+            SELECT * FROM audit_version t1
+            WHERE t1.audit_id = (
+                SELECT t2.audit_id FROM audit_version t2
+                WHERE t2.DATA ->> 'id' = t1.DATA ->> 'id'
+                AND t2.TIME <= :time
+                ORDER BY t2.TIME DESC
+                LIMIT 1
+            )
+            """, nativeQuery = true)
+    List<AuditVersion> getLatestAuditVersionForAll(LocalDate time);
 
     Page<AuditVersion> findByTable(String table, Pageable pageable);
 
