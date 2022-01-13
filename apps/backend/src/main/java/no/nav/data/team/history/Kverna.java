@@ -27,7 +27,7 @@ public class Kverna {
 
     private final AuditVersionRepository auditVersionRepository;
 
-    public void getTeamChanges(LocalDate from, LocalDate to){
+    public List<TeamTransferResponse> getTeamChanges(LocalDate from, LocalDate to){
         val quit = new HashMap<String, LocalDate>();
         val teamChanges = new ArrayList<TeamTransferResponse>();
 
