@@ -88,6 +88,8 @@ public class Kverna {
             }
             snapshotFrom.saveAuditVersion(av);
         });
+
+        return teamChanges;
     }
 
     private class Teamkatalogen{

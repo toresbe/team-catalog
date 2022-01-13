@@ -16,6 +16,10 @@ import java.util.UUID;
 @Repository
 public interface AuditVersionRepository extends JpaRepository<AuditVersion, UUID> {
 
+    @Query(value = """
+            SELECT * FROM audit_version
+            WHERE :timeFrom < time AND time <= timeTo
+            """, nativeQuery = true)
     List<AuditVersion> getByTimeBetween(LocalDate timeFrom, LocalDate timeTo);
 
     @Query(value = """
