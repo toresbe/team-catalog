@@ -16,6 +16,8 @@ import { CustomSpinner } from '../common/Spinner'
 import { Changelog } from '../graph/Changelog'
 import { getAllTeamsForCluster, getAllTeamsForProductArea, getProductArea } from '../../api'
 import { getAllClusters } from '../../api/clusterApi'
+import areaCardIcon from '../../resources/areaCardIcon.svg'
+import { externalCardIcon, peopleCardIcon, teamCardIcon } from '../Images'
 
 export interface DashData {
   teamsCount: number
@@ -302,13 +304,13 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
             <>
               <Block marginTop={spacing}>
                 <RouteLink href={`/area`} hideUnderline>
-                  <TextBox title="Områder" icon={faBuilding} value={dash.productAreasCount || ''} />
+                  <TextBox title="Områder" icon={areaCardIcon} value={dash.productAreasCount || ''} />
                 </RouteLink>
               </Block>
 
               <Block marginTop={spacing}>
                 <RouteLink href={`/team`} hideUnderline>
-                  <TextBox title="Team" icon={faUsers} value={summary.teams} subtext={`Redigert sist uke: ${summary.teamsEditedLastWeek}`} />
+                  <TextBox title="Team" icon={teamCardIcon} value={summary.teams} subtext={`Sist oppdatert i uke ${summary.teamsEditedLastWeek}`} />
                 </RouteLink>
               </Block>
             </>
@@ -317,7 +319,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
           {startPageStatus ? (
             <Block marginTop={spacing}>
               <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
-                <TextBox title="Personer" icon={faUserCircle} value={summary.uniqueResources} subtext={`Medlemskap: ${summary.totalResources}`} />
+                <TextBox title="Personer" icon={peopleCardIcon} value={summary.uniqueResources} subtext={`Medlemskap: ${summary.totalResources}`} />
               </RouteLink>
             </Block>
           ) : (
@@ -325,7 +327,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
               <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
                 <TextBox
                   title="Personer"
-                  icon={faUserCircle}
+                  icon={areaCardIcon}
                   value={members.filter((v, i, a) => a.findIndex((t) => t === v) === i).length}
                   subtext={`Medlemskap: ${members.length}`}
                 />
@@ -335,7 +337,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
           <Block marginTop={spacing}>
             <TextBox
               title="Eksterne"
-              icon={faUserNinja}
+              icon={externalCardIcon}
               value={summary.uniqueResourcesExternal}
               subtext={`Andel: ${((summary.uniqueResourcesExternal * 100) / summary.uniqueResources).toFixed(0)}%`}
             />

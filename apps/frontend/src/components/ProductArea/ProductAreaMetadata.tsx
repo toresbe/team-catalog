@@ -17,6 +17,7 @@ import React from 'react'
 import { ProductAreaSummary2 } from '../dash/Dashboard'
 import { faUserCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons'
 import { TextBox } from '../dash/TextBox'
+import { areaCardIcon } from '../Images'
 
 interface ProductAreaMetadataProps {
   productArea: ProductArea
@@ -100,13 +101,13 @@ function SummaryCards(props: { productAreaId: string; areaSummaryMap: ProductAre
     <Block display="flex" flexWrap width="100%" justifyContent="space-between">
       <Block marginTop={0}>
         <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
-          <TextBox title="Personer" icon={faUserCircle} value={props.areaSummaryMap.uniqueResourcesCount} subtext={`Medlemskap: ${props.areaSummaryMap.membershipCount}`} />
+          <TextBox title="Personer" icon={areaCardIcon} value={props.areaSummaryMap.uniqueResourcesCount} subtext={`Medlemskap: ${props.areaSummaryMap.membershipCount}`} />
         </RouteLink>
       </Block>
       <Block marginTop={0}>
         <TextBox
           title="Eksterne"
-          icon={faUserNinja}
+          icon={areaCardIcon}
           value={props.areaSummaryMap.uniqueResourcesExternal}
           subtext={`Andel: ${((props.areaSummaryMap.uniqueResourcesExternal * 100) / props.areaSummaryMap.uniqueResourcesCount).toFixed(0)}%`}
         />

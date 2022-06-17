@@ -15,6 +15,7 @@ import { DotTags } from '../common/DotTag'
 import { ClusterSummary2 } from '../dash/Dashboard'
 import { faUserCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons'
 import { TextBox } from '../dash/TextBox'
+import { areaCardIcon } from '../Images'
 
 interface ClusterMetadataProps {
   cluster: Cluster
@@ -50,7 +51,7 @@ function SummaryCards(props: { clusterId: string; clustersummaryMap: ClusterSumm
         <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
           <TextBox
             title="Personer"
-            icon={faUserCircle}
+            icon={areaCardIcon}
             value={props.clustersummaryMap.totalUniqueResourcesCount}
             subtext={`Medlemskap: ${props.clustersummaryMap.totalMembershipCount}`}
           />
@@ -59,7 +60,7 @@ function SummaryCards(props: { clusterId: string; clustersummaryMap: ClusterSumm
       <Block marginTop={0}>
         <TextBox
           title="Eksterne"
-          icon={faUserNinja}
+          icon={areaCardIcon}
           value={props.clustersummaryMap.uniqueResourcesExternal}
           subtext={`Andel: ${((props.clustersummaryMap.uniqueResourcesExternal * 100) / props.clustersummaryMap.totalUniqueResourcesCount).toFixed(0)}%`}
         />
