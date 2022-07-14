@@ -10,16 +10,6 @@ const teamsApi = apiUrl + '/team?status=ACTIVE'
 const clustersApi = apiUrl + '/cluster?status=ACTIVE'
 const productareasApi = apiUrl + '/productarea?status=ACTIVE'
 
-// interface TableStructure {
-//   name: String;
-//   team?: { name: String, id?: String };
-//   area?: { name: String, id?: String };
-//   cluster?: { name: String, id?: String };
-//   role: String;
-//   other: String;
-//   type: String;
-// }
-
 function getMemberIdents(teamcatEntity) {
   let members = new Set([])
   const teamArray = teamcatEntity.data.content
@@ -63,7 +53,11 @@ function nomRessourceListQuery(identList) {
             ressurs{
                 navIdent
                 personIdent
-    fornavn
+                fornavn
+                orgTilknytning {
+                    orgEnhet{
+                    navn
+                }
             }
             code
         }
@@ -82,16 +76,6 @@ async function getFromNom(req, idents) {
       console.log(error)
     })
 }
-
-// {
-//   name: String;
-//   team?: { name: String, id?: String };
-//   area?: { name: String, id?: String };
-//   cluster?: { name: String, id?: String };
-//   role: String;
-//   other: String;
-//   type: String;
-// }
 
 function getData() {}
 
@@ -114,11 +98,13 @@ function createTableData(teams, clusters, areas) {
         let memberObject = {
           name: { name: member.resource.fullName, ident: member.navIdent },
           team: { name: team.name, id: team.id },
-          area: { name: productAreaName, id: team.productAreaId },
+          area: { name: productAreaName, id: '' },
           cluster: clusterData,
           roles: member.roles.join(', '),
           other: '',
           type: member.resource.resourceType,
+          // employedIn: '',
+          // department: '',
         }
 
         // console.log(memberObject)
@@ -140,6 +126,8 @@ function createTableData(teams, clusters, areas) {
           roles: member.roles.join(', '),
           other: '',
           type: member.resource.resourceType,
+          // employedIn: '',
+          // department: '',
         }
 
         // console.log(memberObject)
@@ -161,6 +149,8 @@ function createTableData(teams, clusters, areas) {
           roles: member.roles.join(', '),
           other: '',
           type: member.resource.resourceType,
+          // employedIn: '',
+          // department: '',
         }
 
         // console.log(memberObject)
@@ -218,11 +208,8 @@ function setupApi(app) {
         areas.data.content
       )
       res.send({
-        // len: idents.length,
-        // out: idents,
-        // nomRessources: nomRessources.data,
-        teams: areas.data.content,
-        // tesst: 'test',
+        dataLength: tableData.length,
+        data: tableData,
       })
     }
   )
