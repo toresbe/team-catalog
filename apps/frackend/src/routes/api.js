@@ -49,19 +49,23 @@ function nomRessourceListQuery(identList) {
 
   return `query HentAlleRessurser{
         ressurser(where: {navIdenter: ${identListString}} ) {
-            id
-            ressurs{
-                navIdent
-                personIdent
-                fornavn
-                orgTilknytning {
-                    orgEnhet{
-                    navn
-                }
+          id
+          ressurs {
+            navident
+            personIdent
+            fornavn
+      
+            orgTilknytning {
+              orgEnhet {
+                navn
+                
+              }
             }
-            code
+          }
+      
+          code
         }
-    }`
+      }`
 }
 
 async function getFromNom(req, idents) {
@@ -77,16 +81,30 @@ async function getFromNom(req, idents) {
     })
 }
 
-function getData() {}
+function getDepartmen(ident, nomRessources) {
+  let out = ''
+  nomRessources.data.ressurser.forEach((member) => {
+    if (ident === member.navIdent) {
+      member.ressurs.orgTilknytning.forEach((unit) => {
+        out.concat(unit.name + ', ')
+      })
+    }
+  })
+  out.slice(0, -1)
+  return out
+}
 
-function createTableData(teams, clusters, areas) {
+function createTableData(teams, clusters, areas, nomRessources) {
   let tableData = new Array()
+
+  console.log(nomRessources)
 
   teams.forEach((team) => {
     if (team.members.length != 0) {
       team.members.forEach((member) => {
         let productAreaName
         let clusterData = ''
+        let departmentName = getDepartmen(member.navIdent, nomRessources)
 
         if (team.productAreaId) {
           productAreaName = getName(areas, team.productAreaId)
@@ -205,11 +223,13 @@ function setupApi(app) {
       const tableData = createTableData(
         teams.data.content,
         clusters.data.content,
-        areas.data.content
+        areas.data.content,
+        nomRessources.data
       )
       res.send({
-        dataLength: tableData.length,
-        data: tableData,
+        nom: nomRessources.data,
+        // dataLength: tableData.length,
+        // data: tableData,
       })
     }
   )
