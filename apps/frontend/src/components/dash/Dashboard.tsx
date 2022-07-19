@@ -118,6 +118,22 @@ interface PathProps {
   filterValue?: string
 }
 
+interface TableStructure {
+  name: { name: string; ident: string }
+  team: { name?: string; id?: string }
+  area: { name?: string; id?: string }
+  cluster: { name?: string; id?: string }
+  roles: string
+  other: string
+  type: string
+  employedIn: string
+}
+
+const getTableData = async () => {
+  // return (await axios.get<TableStructure>(`${env.teamCatalogBaseUrl}/api/teamcatTabell`)).data
+  return (await axios.get<TableStructure>(`api/api/teamcatTabell`)).data
+}
+
 const getDashboard = async () => {
   return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data
 }
@@ -130,6 +146,16 @@ export const useDash = () => {
   }, [])
 
   return dash
+}
+
+const useTable = () => {
+  const [tableData, setTableData] = useState<TableStructure>()
+
+  useEffect(() => {
+    getTableData().then(setTableData)
+  }, [])
+
+  return tableData
 }
 
 const spacing = theme.sizing.scale600
@@ -221,8 +247,11 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   const cards = props.cards || noSelect
   const charts = props.charts || noSelect
   const dash = useDash()
+  const tableData = useTable()
   const history = useHistory()
   const [members, setMembers] = React.useState<string[]>([])
+
+  console.log({ tableData })
 
   const productAreaView = !!props.productAreaId
   const clusterView = !!props.clusterId

@@ -229,7 +229,7 @@ function setupApi(app) {
         nomRessources.data
       )
       res.send({
-        nom: nomRessources.data,
+        tableData: tableData,
         // dataLength: tableData.length,
         // data: tableData,
       })
