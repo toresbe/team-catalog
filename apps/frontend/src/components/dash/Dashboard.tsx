@@ -130,8 +130,8 @@ interface TableStructure {
 }
 
 const getTableData = async () => {
-  // return (await axios.get<TableStructure>(`${env.teamCatalogBaseUrl}/api/teamcatTabell`)).data
-  return (await axios.get<TableStructure>(`api/api/teamcatTabell`)).data
+  return (await axios.get<TableStructure>(`${env.teamCatalogBaseUrl}/api/teamcatTabell`)).data
+  // return (await axios.get<TableStructure>(`api/api/teamcatTabell`)).data
 }
 
 const getDashboard = async () => {
