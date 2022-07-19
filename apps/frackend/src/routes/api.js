@@ -121,7 +121,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
           roles: member.roles.join(', '),
           other: '',
           type: member.resource.resourceType,
-          // employedIn: '',
+          employedIn: departmentName,
           // department: '',
         }
 
@@ -135,6 +135,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
     if (area.members.length != 0) {
       area.members.forEach((member) => {
         let clusterData = ''
+        let departmentName = getDepartmen(member.navIdent, nomRessources)
 
         let memberObject = {
           name: { name: member.resource.fullName, ident: member.navIdent },
@@ -144,7 +145,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
           roles: member.roles.join(', '),
           other: '',
           type: member.resource.resourceType,
-          // employedIn: '',
+          employedIn: departmentName,
           // department: '',
         }
 
@@ -158,6 +159,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
     if (cluster.members.length != 0) {
       cluster.members.forEach((member) => {
         let clusterData = ''
+        let departmentName = getDepartmen(member.navIdent, nomRessources)
 
         let memberObject = {
           name: { name: member.resource.fullName, ident: member.navIdent },
@@ -167,7 +169,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
           roles: member.roles.join(', '),
           other: '',
           type: member.resource.resourceType,
-          // employedIn: '',
+          employedIn: departmentName,
           // department: '',
         }
 
