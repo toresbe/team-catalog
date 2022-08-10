@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Cluster, Member, ProductArea, ProductTeam, Resource, ResourceUnits, TeamRole } from '../../constants'
 import { getAllProductAreas, getAllTeams, getResourceById, getResourceUnitsById } from '../../api'
 import { Cell, Row, Table } from '../common/Table'
@@ -14,6 +14,8 @@ import { useQueryParam } from '../../util/hooks'
 import { getAllClusters, mapClusterToFormValues } from '../../api/clusterApi'
 import ModalContactMembers from './ModalContactMembers'
 import { UserImage } from '../common/UserImage'
+import axios from 'axios'
+import { env } from '../../util/env'
 
 export type MemberExt = Member &
   Partial<Resource> & {
@@ -22,7 +24,30 @@ export type MemberExt = Member &
     cluster?: Cluster
   }
 
-const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.productArea?.name || (a.team?.productAreaId && pasMap[a.team.productAreaId]) || ''
+interface TableStructure {
+  name: { name: string; ident: string }
+  team: { name?: string; id?: string }
+  area: { name?: string; id?: string }
+  cluster: { name?: string; id?: string }
+  roles: string
+  other: string
+  type: string
+  employedIn: string
+}
+
+const getTableData = async () => {
+  return (await axios.get<TableStructure[]>(`${env.teamCatalogFrackEndApi}/teamcatTabell`)).data
+}
+
+const useTable = () => {
+  const [tableData, setTableData] = useState<TableStructure[]>()
+
+  useEffect(() => {
+    getTableData().then(setTableData)
+  }, [])
+
+  return tableData
+}
 
 export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => {
   const { role, leaderIdent } = props
@@ -34,6 +59,9 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
   const [leader, setLeader] = React.useState<(Resource & ResourceUnits) | undefined>()
   const productAreaId = useQueryParam('productAreaId')
   const clusterId = useQueryParam('clusterId')
+  const tableData = useTable()
+
+  console.log({ tableData })
 
   useEffect(() => {
     ;(async () => {
@@ -124,51 +152,50 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
       {!loading && (
         <Table
           emptyText={'team'}
-          data={filtered}
+          data={tableData || []}
           config={{
             pageSizes: [10, 20, 50, 100, 500, 1000, 10000],
             defaultPageSize: 100,
             useDefaultStringCompare: true,
-            initialSortColumn: 'fullName',
+            initialSortColumn: 'name',
             sorting: {
               team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
-              productArea: (a, b) => productAreaName(a, pasMap).localeCompare(productAreaName(b, pasMap)),
-              roles: (a, b) => (a.roles[0] || '').localeCompare(b.roles[0] || ''),
+              area: (a, b) => (a.area?.name || '').localeCompare(b.team?.name || ''),
+              roles: (a, b) => (a.roles || '').localeCompare(b.roles || ''),
             },
             filter: {
-              fullName: { type: 'search' },
+              name: { type: 'search' },
               team: { type: 'select', mapping: (m) => ({ id: m.team?.id, label: m.team?.name }) },
-              productArea: {
+              area: {
                 type: 'select',
                 options: (ms) =>
                   _.uniqBy(
                     ms
-                      .map((m) => m.productArea?.id || m.team?.productAreaId)
+                      .map((m) => m.area?.id)
                       .filter((id) => !!id)
                       .map((id) => ({ id: id, label: pasMap[id!] })),
                     (pa) => pa.id
                   ),
-                mapping: (m) => ({ id: m.team?.productAreaId || m.productArea?.id, label: m.productArea?.name }),
+                mapping: (m) => ({ id: m.area?.id, label: m.area?.name }),
               },
               roles: {
                 type: 'select',
                 options: (ms) => rolesToOptions(_.uniq(ms.flatMap((m) => m.roles))),
                 mapping: (m) => rolesToOptions(m.roles),
               },
-              description: { type: 'search' },
-              resourceType: { type: 'select', mapping: (m) => ({ id: m.resourceType, label: intl[m.resourceType!] }) },
+              type: { type: 'select', mapping: (m) => ({ id: m.type, label: intl[m.type] }) },
             },
           }}
           headers={[
             { title: '#', $style: { maxWidth: '15px' } },
             { title: 'Bilde', $style: { maxWidth: '40px' } },
-            { title: 'Navn', column: 'fullName' },
+            { title: 'Navn', column: 'name' },
             { title: 'Team', column: 'team' },
-            { title: 'Område', column: 'productArea' },
+            { title: 'Område', column: 'area' },
             { title: 'Klynger', column: 'cluster' },
             { title: 'Roller', column: 'roles' },
-            { title: 'Annet', column: 'description' },
-            { title: 'Type', column: 'resourceType' },
+            { title: 'Annet', column: 'other' },
+            { title: 'Type', column: 'type' },
           ]}
           render={(table) =>
             table.data.slice(table.pageStart, table.pageEnd).map((member, idx) => (
@@ -178,22 +205,22 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
                   <UserImage ident={member.navIdent} size="40px" />
                 </Cell>
                 <Cell>
-                  <RouteLink href={`/resource/${member.navIdent}`}>{member.fullName}</RouteLink>
+                  <RouteLink href={`/resource/${member.navIdent}`}>{member.name}</RouteLink>
                 </Cell>
                 <Cell>
                   <RouteLink href={`/team/${member?.team?.id}`}>{member.team?.name}</RouteLink>
                 </Cell>
                 <Cell>
-                  {member.productArea && <RouteLink href={`/productArea/${member.productArea.id}`}>{member.productArea.name}</RouteLink>}
-                  {member.team?.productAreaId && <Block $style={{ opacity: '.75' }}>{pasMap[member.team.productAreaId]}</Block>}
+                  {member.area && <RouteLink href={`/productArea/${member.area.id}`}>{member.area.name}</RouteLink>}
+                  {member.team?.id && <Block $style={{ opacity: '.75' }}>{pasMap[member.team.id]}</Block>}
                 </Cell>
                 <Cell>
                   {member.cluster && <RouteLink href={`/cluster/${member.cluster.id}`}>{member.cluster.name}</RouteLink>}
-                  {member.team && <Block $style={{ opacity: '.75' }}>{member.team.clusterIds.map((id) => clusterMap[id]).join(', ')}</Block>}
+                  {member.team && <Block $style={{ opacity: '.75' }}>{member.cluster.name || ''}</Block>}
                 </Cell>
-                <Cell>{member.roles.map((r) => intl[r]).join(', ')}</Cell>
-                <Cell>{member.description}</Cell>
-                <Cell>{intl[member.resourceType!]}</Cell>
+                <Cell>{member.roles}</Cell>
+                <Cell>{member.other}</Cell>
+                <Cell>{intl[member.type]}</Cell>
               </Row>
             ))
           }
