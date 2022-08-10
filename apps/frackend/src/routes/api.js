@@ -214,20 +214,40 @@ function setupApi(app) {
       setOnBehalfOfToken.addTokenToSession(req, res, next, nomScope)
     },
     async (req, res, next) => {
-      const teams = await getFromTeamCat(req, teamsApi)
-      const clusters = await getFromTeamCat(req, clustersApi)
-      const areas = await getFromTeamCat(req, productareasApi)
+      const refTime = Date.now()
 
-      const idents = getAllTeamCatIdents(teams, clusters, areas)
+      const teams = getFromTeamCat(req, teamsApi)
+      const clusters = getFromTeamCat(req, clustersApi)
+      const areas = getFromTeamCat(req, productareasApi)
 
-      const nomRessources = await getFromNom(req, idents)
+      const [awaited_teams, awaited_clusters, awaited_areas] =
+        await Promise.all([teams, clusters, areas])
 
-      const tableData = createTableData(
-        teams.data.content,
-        clusters.data.content,
-        areas.data.content,
-        nomRessources.data
+      const catTime = Date.now() - refTime
+
+      const idents = getAllTeamCatIdents(
+        awaited_teams,
+        awaited_clusters,
+        awaited_areas
       )
+      const extractIdentTime = Date.now() - refTime
+      const nomRessources = await getFromNom(req, idents)
+      const beforeTableTime = Date.now() - refTime
+      const tableData = createTableData(
+        awaited_teams.data.content,
+        awaited_clusters.data.content,
+        awaited_areas.data.content,
+        (await nomRessources).data
+      )
+      const afterTableTime = Date.now() - refTime
+
+      console.log({
+        refTime,
+        catTime,
+        extractIdentTime,
+        beforeTableTime,
+        afterTableTime,
+      })
       res.send({
         tableData: tableData,
         // dataLength: tableData.length,
