@@ -25,7 +25,7 @@ export type MemberExt = Member &
   }
 
 interface TableStructure {
-  ressource: { name: string; ident: string }
+  resource: { name: string; ident: string }
   team: { name?: string; id?: string }
   area: { name?: string; id?: string }
   cluster: { name?: string; id?: string }
@@ -43,9 +43,14 @@ const useTable = () => {
   const [tableData, setTableData] = useState<TableStructure[]>()
 
   useEffect(() => {
-    getTableData().then(setTableData)
+    const doAsync = async () => {
+      const x = await getTableData()
+      console.log({ out: x })
+      setTableData(x)
+    }
+    doAsync()
   }, [])
-
+  // console.log({ out: tableData })
   return tableData
 }
 
@@ -157,14 +162,15 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
             pageSizes: [10, 20, 50, 100, 500, 1000, 10000],
             defaultPageSize: 100,
             useDefaultStringCompare: true,
-            initialSortColumn: 'ressource',
+            initialSortColumn: 'resource',
             sorting: {
-              team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
-              area: (a, b) => (a.area?.name || '').localeCompare(b.team?.name || ''),
-              // roles: (a, b) => (a.roles || '').localeCompare(b.roles || ''),
+              // team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
+              // area: (a, b) => (a.area?.name || '').localeCompare(b.team?.name || ''),
+              // productArea: (a, b) => productAreaName(a, pasMap).localeCompare(productAreaName(b, pasMap)),
+              // roles: (a, b) => (a.roles[0] || '').localeCompare(b.roles[0] || ''),
             },
             filter: {
-              ressource: { type: 'search' },
+              resource: { type: 'search' },
               team: { type: 'select', mapping: (m) => ({ id: m.team?.id, label: m.team?.name }) },
               area: {
                 type: 'select',
@@ -189,7 +195,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
           headers={[
             { title: '#', $style: { maxWidth: '15px' } },
             { title: 'Bilde', $style: { maxWidth: '40px' } },
-            { title: 'Navn', column: 'ressource' },
+            { title: 'Navn', column: 'resource' },
             { title: 'Team', column: 'team' },
             { title: 'Område', column: 'area' },
             { title: 'Klynger', column: 'cluster' },
@@ -202,10 +208,10 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
               <Row key={idx}>
                 <Cell $style={{ maxWidth: '15px' }}>{(table.page - 1) * table.limit + idx + 1}</Cell>
                 <Cell $style={{ maxWidth: '40px' }}>
-                  <UserImage ident={member.ressource.ident} size="40px" />
+                  <UserImage ident={member.resource.ident} size="40px" />
                 </Cell>
                 <Cell>
-                  <RouteLink href={`/resource/${member.ressource.ident}`}>{member.ressource.name}</RouteLink>
+                  <RouteLink href={`/resource/${member.resource.ident}`}>{member.resource.name}</RouteLink>
                 </Cell>
                 <Cell>
                   <RouteLink href={`/team/${member?.team?.id}`}>{member.team?.name}</RouteLink>
@@ -218,7 +224,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
                   {member.cluster && <RouteLink href={`/cluster/${member.cluster.id}`}>{member.cluster.name}</RouteLink>}
                   {member.team && <Block $style={{ opacity: '.75' }}>{member.cluster.name || ''}</Block>}
                 </Cell>
-                <Cell>{member.roles}</Cell>
+                <Cell>{member.roles.map((r) => intl[r]).join(', ')}</Cell>
                 <Cell>{member.other}</Cell>
                 <Cell>{intl[member.type]}</Cell>
               </Row>

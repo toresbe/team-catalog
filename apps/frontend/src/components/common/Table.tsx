@@ -87,6 +87,7 @@ const createTableContext = _.once(<T, K extends keyof T>() => React.createContex
 const useTableContext = <T, K extends keyof T>() => useContext(createTableContext<T, K>())
 
 export const Table = <T, K extends keyof T>(props: TableProps<T, K>) => {
+  console.log({ props })
   const table = useTable<T, K>(props.data, props.config)
   const TableContext = createTableContext<T, K>()
 

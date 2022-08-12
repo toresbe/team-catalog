@@ -43,7 +43,7 @@ async function getFromTeamCat(req, apiUrl) {
     })
 }
 
-function nomRessourceListQuery(identList) {
+function nomResourceListQuery(identList) {
   const identListString =
     '[' + identList.map((ident) => `"${ident}"`).join(',') + ']'
 
@@ -70,7 +70,7 @@ function nomRessourceListQuery(identList) {
 
 async function getFromNom(req, idents) {
   return await axios
-    .post(config.proxy.nomApiUrl + '/graphql', nomRessourceListQuery(idents), {
+    .post(config.proxy.nomApiUrl + '/graphql', nomResourceListQuery(idents), {
       headers: {
         Authorization: 'Bearer ' + req.session[nomScope].accessToken,
         'Content-Type': 'application/graphql',
@@ -81,9 +81,9 @@ async function getFromNom(req, idents) {
     })
 }
 
-function getDepartmen(ident, nomRessources) {
+function getDepartmen(ident, nomresources) {
   let out = ''
-  nomRessources.data.ressurser.forEach((member) => {
+  nomresources.data.ressurser.forEach((member) => {
     if (ident === member.navIdent) {
       member.ressurs.orgTilknytning.forEach((unit) => {
         out.concat(unit.name + ', ')
@@ -94,17 +94,17 @@ function getDepartmen(ident, nomRessources) {
   return out
 }
 
-function createTableData(teams, clusters, areas, nomRessources) {
+function createTableData(teams, clusters, areas, nomresources) {
   let tableData = new Array()
 
-  console.log(nomRessources)
+  console.log(nomresources)
 
   teams.forEach((team) => {
     if (team.members.length != 0) {
       team.members.forEach((member) => {
         let productAreaName
         let clusterData = ''
-        let departmentName = getDepartmen(member.navIdent, nomRessources)
+        let departmentName = getDepartmen(member.navIdent, nomresources)
 
         if (team.productAreaId) {
           productAreaName = getName(areas, team.productAreaId)
@@ -114,7 +114,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
         }
 
         let memberObject = {
-          ressource: { name: member.resource.fullName, ident: member.navIdent },
+          resource: { name: member.resource.fullName, ident: member.navIdent },
           team: { name: team.name, id: team.id },
           area: { name: productAreaName, id: '' },
           cluster: clusterData,
@@ -135,7 +135,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
     if (area.members.length != 0) {
       area.members.forEach((member) => {
         let clusterData = ''
-        let departmentName = getDepartmen(member.navIdent, nomRessources)
+        let departmentName = getDepartmen(member.navIdent, nomresources)
 
         let memberObject = {
           name: { name: member.resource.fullName, ident: member.navIdent },
@@ -159,7 +159,7 @@ function createTableData(teams, clusters, areas, nomRessources) {
     if (cluster.members.length != 0) {
       cluster.members.forEach((member) => {
         let clusterData = ''
-        let departmentName = getDepartmen(member.navIdent, nomRessources)
+        let departmentName = getDepartmen(member.navIdent, nomresources)
 
         let memberObject = {
           name: { name: member.resource.fullName, ident: member.navIdent },
@@ -231,13 +231,13 @@ function setupApi(app) {
         awaited_areas
       )
       const extractIdentTime = Date.now() - refTime
-      const nomRessources = await getFromNom(req, idents)
+      const nomresources = await getFromNom(req, idents)
       const beforeTableTime = Date.now() - refTime
       const tableData = createTableData(
         awaited_teams.data.content,
         awaited_clusters.data.content,
         awaited_areas.data.content,
-        (await nomRessources).data
+        (await nomresources).data
       )
       const afterTableTime = Date.now() - refTime
 
@@ -248,11 +248,7 @@ function setupApi(app) {
         beforeTableTime,
         afterTableTime,
       })
-      res.send({
-        tableData: tableData,
-        // dataLength: tableData.length,
-        // data: tableData,
-      })
+      res.send(tableData)
     }
   )
 }
