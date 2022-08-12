@@ -114,11 +114,11 @@ function createTableData(teams, clusters, areas, nomRessources) {
         }
 
         let memberObject = {
-          name: { name: member.resource.fullName, ident: member.navIdent },
+          ressource: { name: member.resource.fullName, ident: member.navIdent },
           team: { name: team.name, id: team.id },
           area: { name: productAreaName, id: '' },
           cluster: clusterData,
-          roles: member.roles.join(', '),
+          roles: member.roles,
           other: '',
           type: member.resource.resourceType,
           employedIn: departmentName,
