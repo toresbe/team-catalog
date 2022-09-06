@@ -1,5 +1,6 @@
 import { css } from "@emotion/css"
 import { BodyShort, Heading } from "@navikt/ds-react"
+import { Link } from "react-router-dom"
 import { Member } from "../../constants"
 import greyBackground from '../../resources/greyBackground.svg'
 import { intl } from "../../util/intl/intl"
@@ -33,7 +34,9 @@ const imageDivStyles = css`
 const CardMemberNew = (props: {member: Member}) => (
     <div className={cardStyles}>
         <div className={css`height: 100%; padding-left: 20px;`}>
-            <Heading size="medium" className={headingStyles}>{props.member.resource.fullName}</Heading>
+            <Link to={`/resource/${props.member.navIdent}`} className={css`text-decoration: none;`}>
+                <Heading size="medium" className={headingStyles}>{props.member.resource.fullName}</Heading>
+            </Link>
             <div className={css` margin-top: 1.5rem;`}>
                 <div className={css`margin-bottom: 5px;`}>Roller</div> <div><b>{props.member.roles.map((r) => intl[r]).join(', ')}</b></div>
             </div>
