@@ -5,8 +5,8 @@ const dividerStyles = css`
     height: 5px;
     background: #E6F1F8;
     border-radius: 4px;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
 `
 
 const Divider = () => <div className={dividerStyles}></div>

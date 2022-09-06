@@ -8,7 +8,7 @@ import RouteLink from "./RouteLink"
 import { TextWithLabel } from "./TextWithLabel"
 
 const Divider = () => (
-    <div className={css`height: 5px; background: #005077;`}></div>
+    <div className={css`height: 5px; background: #005077; margin-bottom: 3px;`}></div>
 )
 
 interface ShortSummaryProps {

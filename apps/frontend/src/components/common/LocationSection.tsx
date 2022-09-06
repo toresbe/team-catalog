@@ -12,7 +12,7 @@ import officeDaysIcon from '../../resources/officeDaysIcon.svg'
 import slackIcon from '../../resources/slackIcon.svg'
 
 const Divider = () => (
-    <div className={css`height: 5px; background: #005077; `}></div>
+    <div className={css`height: 5px; background: #005077; margin-bottom: 5px`}></div>
 )
 
 const rowStyling = css`
@@ -67,13 +67,6 @@ const LocationSection = (props: LocationSectionProps) => {
                         <div className={iconDivStyling}> <img src={locationIcon} alt="Lokasjon" /></div>
                         <TextWithLabel label={'Lokasjon'} text={<RouteLink href={`/location/${team.officeHours?.location.code}`}>{team.officeHours?.location.displayName}</RouteLink>} />
                     </div>
-
-                    {team.officeHours.days && (
-                        <div className={rowStyling}>
-                          <div className={iconDivStyling}> <img src={officeDaysIcon} alt="Planlagte kontordager ikon" /></div>
-                            <TextWithLabel label={'Planlagte kontordager'} text={displayOfficeHours(team.officeHours.days, team.officeHours.information)} />
-                        </div>
-                    )}
                 </>
             )}
 
@@ -92,6 +85,18 @@ const LocationSection = (props: LocationSectionProps) => {
                     }
                   />
             </div>
+
+            {team.officeHours && (
+              <>
+                {team.officeHours.days && (
+                    <div className={rowStyling}>
+                      <div className={iconDivStyling}> <img src={officeDaysIcon} alt="Planlagte kontordager ikon" /></div>
+                        <TextWithLabel label={'Planlagte kontordager'} text={displayOfficeHours(team.officeHours.days, team.officeHours.information)} />
+                    </div>
+                )}
+              </>
+
+            )}
 
 
             
