@@ -10,7 +10,7 @@ const cardStyles = css`
     height: 151px;
     width: 435px;
     border: 1px solid #005077;
-    border-radius: 8px;
+    border-radius: 4px;
     display: grid;
     grid-template-columns: 1fr 0.3fr;
     margin-bottom: 1rem;
