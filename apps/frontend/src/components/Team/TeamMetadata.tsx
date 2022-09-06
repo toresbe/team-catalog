@@ -36,7 +36,7 @@ function Loading({ t }: { t: boolean }) {
   ) : null
 }
 
-function BulletPointsList(props: { label: string; baseUrl?: string; list?: string[]; children?: ReactNode[] }) {
+export function BulletPointsList(props: { label: string; baseUrl?: string; list?: string[]; children?: ReactNode[] }) {
   const len = (props.list || props.children || []).length
   return (
     <Block>
@@ -74,7 +74,7 @@ function TeamOwnerResource(props: { resource: Resource }): JSX.Element {
   )
 }
 
-function TeamOwner(props: { teamOwner?: Resource }) {
+export function TeamOwner(props: { teamOwner?: Resource }) {
   if (!props.teamOwner) return <TextWithLabel label="Team eier" text={'Ingen eier'} />
 
   const teamOwner = props.teamOwner

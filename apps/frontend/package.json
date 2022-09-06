@@ -35,10 +35,15 @@
     "rehype-raw": "^6.1.1",
     "remark-gfm": "^3.0.1",
     "shortid": "^2.2.16",
-    "styletron-engine-atomic": "^1.5.0",
-    "styletron-react": "^6.1.0",
-    "typescript": "^4.8.2",
-    "yup": "^0.32.11"
+    "styletron-engine-atomic": "^1.4.8",
+    "styletron-react": "^6.0.2",
+    "typescript": "^4.3.5",
+    "yup": "^0.32.9",
+    "@navikt/ds-css": "^1.0.2",
+    "@navikt/ds-css-internal": "^1.0.2",
+    "@navikt/ds-icons": "^1.0.2",
+    "@navikt/ds-react": "^1.0.2",
+    "@navikt/ds-react-internal": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",

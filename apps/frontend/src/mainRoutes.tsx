@@ -23,6 +23,7 @@ import { OrgMainPage } from './pages/OrgMainPage'
 import { OrgStartPage } from './pages/OrgStartPage'
 import LocationView from './pages/LocationView'
 import NomAutogenApiTestPage from "./pages/NomAutogenApiTestPage";
+import TeamPageNew from './pages/TeamPageNew'
 
 const MainRoutes = (): JSX.Element => (
   <Root>
@@ -43,6 +44,7 @@ const MainRoutes = (): JSX.Element => (
 
       <Route path="/team" element={<TeamListPage/>} />
       <Route path="/team/:id" element={<TeamPage/>} />
+      <Route path="/team2/:id" element={<TeamPageNew />} />
 
       <Route path="/resource/:id" element={<ResourcePage/>} />
 

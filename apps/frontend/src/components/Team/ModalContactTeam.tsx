@@ -93,7 +93,7 @@ export default function ModalContactTeam(props: { team?: ProductTeam; contactPer
   return (
     <React.Fragment>
       <Button tooltip="Kontakt personer" icon={faMailBulk} kind="outline" size="compact" onClick={() => setIsOpen(true)}>
-        kontakt team
+        Kontakt team
       </Button>
       <Modal
         onClose={close}
